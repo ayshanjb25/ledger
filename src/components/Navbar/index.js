@@ -35,12 +35,12 @@ const Navbar = () => {
   }
  
   return (
-    <div style={{ width: "12%", height: "100vh" }}>
+    <div style={{ width: "14%", height: "100vh" }}>
      
       <Menu
         mode="vertical"
         style={{
-          width: "10.5%",
+          width: "12.5%",
           height: "100%",
           position: "fixed",
           fontSize: "18px",
