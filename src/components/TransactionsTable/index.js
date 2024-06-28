@@ -45,9 +45,6 @@ const TransactionTable = ({ transactions, addTransaction, fetchTransactions, del
       key: "action",
       render: (_, record) => (
         <div style={{ display: "flex", gap: "20px" }} key={record.id}>
-         
-            
-            
           
             <Button text="View Transaction" blue={false}/>
           
