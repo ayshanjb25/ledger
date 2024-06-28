@@ -1,4 +1,12 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { toast } from "react-toastify";
@@ -14,7 +22,7 @@ import NoTransactions from "../components/NoTransactions";
 import Navbar from "../components/Navbar";
 import { Divider } from "antd";
 
-const Dashboard = () => {       
+const Dashboard = () => {
   const [user] = useAuthState(auth);
   const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
@@ -23,10 +31,11 @@ const Dashboard = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalBalance, setTotalBalance] = useState(0);
-  const [income, setIncome] = useState(0);const [expense, setExpense] = useState(0);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
-  const [userName, setUserName] =useState('')
-  
+  const [userName, setUserName] = useState("");
+
   const [sortKey, setSortKey] = useState("");
 
   const showIncomeModal = () => {
@@ -92,8 +101,6 @@ const Dashboard = () => {
     // calculateBalance();
   };
 
- 
-
   const addCustomer = async (customer) => {
     //Add the doc
     try {
@@ -132,8 +139,7 @@ const Dashboard = () => {
     fetchTransactions();
     fetchCustomers();
     fetchUserName();
-  },[user]);
-
+  }, [user]);
 
   const fetchUserName = async () => {
     if (user) {
@@ -144,7 +150,7 @@ const Dashboard = () => {
       }
     }
   };
-  
+
   const fetchTransactions = async (fetchedCustomers = []) => {
     setLoading(true);
     if (user) {
@@ -154,22 +160,28 @@ const Dashboard = () => {
       querySnapshot.forEach((doc) => {
         transactionArray.push({ id: doc.id, ...doc.data() });
       });
-  
+
       // Add customer names to transactions
-      const transactionsWithCustomerNames = transactionArray.map((transaction) => {
-        const customer = fetchedCustomers.find((cust) => cust.id === transaction.customerId);
-        return { 
-          ...transaction, 
-          customerName: customer ? `${customer.name} - ${customer.business}` : "Unknown",
-        };
-      });
-  
+      const transactionsWithCustomerNames = transactionArray.map(
+        (transaction) => {
+          const customer = fetchedCustomers.find(
+            (cust) => cust.id === transaction.customerId
+          );
+          return {
+            ...transaction,
+            customerName: customer
+              ? `${customer.name} - ${customer.business}`
+              : "Unknown",
+          };
+        }
+      );
+
       setTransactions(transactionsWithCustomerNames);
       toast.success("Transactions Fetched!");
     }
     setLoading(false);
   };
-  
+
   // useEffect(() => {
   //   if (user) {
   //     fetchCustomers();
@@ -178,23 +190,23 @@ const Dashboard = () => {
   useEffect(() => {
     //Get all docs from a collection
     calculateBalance();
-  },[transactions]);
+  }, [transactions]);
 
-  const calculateBalance = ()=>{
+  const calculateBalance = () => {
     let incomeTotal = 0;
     let expensesTotal = 0;
 
-    transactions.forEach((transaction)=>{
-      if(transaction.type === 'Income'){
+    transactions.forEach((transaction) => {
+      if (transaction.type === "Income") {
         incomeTotal += transaction.amount;
-      }else{
-        expensesTotal += transaction.amount
+      } else {
+        expensesTotal += transaction.amount;
       }
     });
     setIncome(incomeTotal);
     setExpense(expensesTotal);
     setTotalBalance(incomeTotal - expensesTotal);
-  }
+  };
 
   const fetchCustomers = async () => {
     if (user) {
@@ -207,25 +219,28 @@ const Dashboard = () => {
       setCustomers(customerList);
       setCustomerCount(customerList.length); // Set customer count
       toast.success("Customers Fetched!");
-      fetchTransactions(customerList); 
+      fetchTransactions(customerList);
     }
   };
   const getCurrentUser = () => {
     return auth.currentUser; // Assuming `auth` is your Firebase Auth instance
   };
-  
+
   const deleteTransaction = async (transactionId) => {
     try {
-      const user = getCurrentUser(); 
+      const user = getCurrentUser();
       if (user) {
-        const transactionRef = doc(db, `users/${user.uid}/transactions/${transactionId}`);
+        const transactionRef = doc(
+          db,
+          `users/${user.uid}/transactions/${transactionId}`
+        );
         // const transactionRef = doc(db, "transactions",id);
 
-        console.log(transactionRef)
+        console.log(transactionRef);
         await deleteDoc(transactionRef);
         toast.success("Transaction deleted successfully");
         fetchTransactions();
-      }else {
+      } else {
         toast.error("User not authenticated");
       }
     } catch (error) {
@@ -234,53 +249,73 @@ const Dashboard = () => {
     }
   };
   let sortedTransactions = transactions.sort((a, b) => {
-  
-      return new Date(a.date) - new Date(b.date);});
-  
+    return new Date(a.date) - new Date(b.date);
+  });
 
   return (
     <div>
       <Header />
-      <div style={{display:"flex", flexDirection:"row"}}>
-      <Navbar/>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-        <div style={{display:"flex", flexDirection:"column", width:"100%"}}>
-        <h2 className='greeting'>Welcome Back , <span>{userName}</span>👋</h2>
-        <p className='subtext'>Access and manage your account and transactions efficently.</p>
-          <Cards
-          income={income}
-          expense={expense}
-          totalBalance={totalBalance}
-          customerCount={customerCount}
-            showIncomeModal={showIncomeModal}
-            showExpenseModal={showExpenseModal}
-            showCustomerModal={showCustomerModal}
-          />
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <Navbar />
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+              }}
+            >
+              <h2 className="greeting">
+                Welcome Back , <span>{userName}</span>👋
+              </h2>
+              <p className="subtext">
+                Access and manage your account and transactions efficently.
+              </p>
+              <Cards
+                income={income}
+                expense={expense}
+                totalBalance={totalBalance}
+                customerCount={customerCount}
+                showIncomeModal={showIncomeModal}
+                showExpenseModal={showExpenseModal}
+                showCustomerModal={showCustomerModal}
+              />
 
-          <AddIncomeModal
-            isIncomeModalVisible={isIncomeModalVisible}
-            handleIncomeCancel={handleIncomeCancel}
-            onFinish={onFinish}
-          />
-          <AddExpenseModal
-            isExpenseModalVisible={isExpenseModalVisible}
-            handleExpenseCancel={handleExpenseCancel}
-            onFinish={onFinish}
-          />
-          <AddCustomerModal
-            isCustomerModalVisible={isCustomerModalVisible}
-            handleCustomerCancel={handleCustomerCancel}
-            onFinish={onCustomerFinish}
-          />
-           <Divider style={{marginRight:"4rem", marginLeft:"2rem"}}/>
-          
-          {transactions && transactions.length!= 0 ? <Chart sortedTransactions={sortedTransactions}/> :<NoTransactions/>}
-          <TransactionTable transactions={transactions} addTransaction={addTransaction} fetchTransactions={fetchTransactions} deleteTransaction={deleteTransaction}/>
-          </div> </>
-      )}</div>
+              <AddIncomeModal
+                isIncomeModalVisible={isIncomeModalVisible}
+                handleIncomeCancel={handleIncomeCancel}
+                onFinish={onFinish}
+              />
+              <AddExpenseModal
+                isExpenseModalVisible={isExpenseModalVisible}
+                handleExpenseCancel={handleExpenseCancel}
+                onFinish={onFinish}
+              />
+              <AddCustomerModal
+                isCustomerModalVisible={isCustomerModalVisible}
+                handleCustomerCancel={handleCustomerCancel}
+                onFinish={onCustomerFinish}
+              />
+            
+
+              {transactions && transactions.length != 0 ? (
+                <Chart sortedTransactions={sortedTransactions} />
+              ) : (
+                <NoTransactions />
+              )}
+              <TransactionTable
+                transactions={transactions}
+                addTransaction={addTransaction}
+                fetchTransactions={fetchTransactions}
+                deleteTransaction={deleteTransaction}
+              />
+            </div>{" "}
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import { Popconfirm, Radio, Select, Table, Button} from "antd";
-import { parse, unparse } from "papaparse";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import searchImg from "../../assets/search.svg";
 import './styles.css'
 
@@ -41,6 +39,20 @@ const TransactionTable = ({ transactions, addTransaction, fetchTransactions, del
       title: "Date",
       dataIndex: "date",
       key: "date",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "20px" }} key={record.id}>
+         
+            
+            
+          
+            <Button text="View Transaction" blue={false}/>
+          
+        </div>
+      ),
     },
     
   ];

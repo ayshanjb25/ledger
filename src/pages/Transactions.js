@@ -171,7 +171,7 @@ const Transactions = () => {
   return (
     <div>
       <Header />
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div style={{ display: "flex", flexDirection: "row" }}>     
         <Navbar />
         {loading ? (
           <p>Loading...</p>
@@ -208,7 +208,7 @@ const Transactions = () => {
                 handleExpenseCancel={handleExpenseCancel}
                 onFinish={onFinish}
               />
-            </div>{" "}
+            </div>
           </>
         )}
       </div>
